@@ -1,0 +1,2371 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Create Square on Click</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&family=Roboto:wght@400;700&family=Shrikhand&display=swap');
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+         background-color: #333;
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         justify-content: center;
+         font-family: 'VT323', monospace;
+         min-height: 100vh;
+         margin: 0;
+
+         overflow: hidden;
+      }
+
+      h1 {
+        font-size: 4rem;
+        color: #222222
+      }
+
+      .intro-screen
+      {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 20;
+        background-color: #000000;
+        color: #fff;
+      }
+
+      .start-screen
+      {
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 6;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url('Assets/Images/MenuBackground.png');
+        background-repeat: no-repeat;
+        background-size: 100%;
+        /* background-position: 0 100%; */
+      }
+
+      .controls-screen
+      {
+        position: absolute;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 6;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url('Assets/Images/MenuBackground.png');
+        background-repeat: no-repeat;
+        background-size: 100%;
+        /* background-position: 0 100%; */
+      }
+
+      .keys
+      {
+        position: absolute;
+        top: 75%;
+        display: flex;
+        justify-content: space-between;
+        width: 66.75%;
+        opacity: 0;
+        animation: test 0.5s forwards;
+        animation-delay: 0.5s;
+        z-index: 8;
+        /* background-color: #000000; */
+        gap:  11rem;
+      }
+
+      .keys-image
+      {
+        z-index: 8;
+        margin-top: 5%;
+        opacity: 0;
+        animation: test 0.5s forwards;
+        animation-delay: 0.5s;
+      }
+
+      .keys-text-container
+      {
+        display: flex;
+        justify-content: space-between;
+        font-size: 2rem;
+        flex: 1;
+        /* background-color: #333; */
+      }
+
+      .overlay
+      {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0;
+        background-color: rgba(0, 0, 0, 0.75);
+        animation: overlayScale 0.5s forwards;
+        animation-delay: 0.5s;
+      }
+
+      .character 
+      {
+        position: absolute;
+        width: 37%;
+        top: 22%;
+      }
+
+      .character-small
+      {
+        position: absolute;
+        z-index: 7;
+        top: 17.5%;
+        width: 15%;
+      }
+
+
+      .character-small-left
+      {
+        left: 0;
+        transform: translateX(260px);
+        animation: characterSlideRightSmall 0.5s;
+      }
+
+      .character-small-right
+      {
+        right: 0;
+        transform: translateX(100%);
+        animation: characterSlideLeftSmall 0.5s forwards;
+        animation-delay: 0.25s;
+      }
+
+      .character1
+      {
+        left: 0;
+        /* left: 60px; */
+        transform: translateX(50px);
+        animation: characterSlideRight 0.5s;
+      }
+
+      .character2
+      {
+        right: 0;
+        /* left: 60px; */
+        transform: translateX(100%);
+        animation: characterSlideLeft 0.5s forwards;
+        animation-delay: 0.25s;
+      }
+
+      @keyframes overlayScale {
+        0% {
+          opacity: 0;
+        }
+
+        100% {
+          opacity: 1;
+        }
+      }
+
+      @keyframes characterSlideRightSmall {
+        0% {
+          transform: translateX(-100%);
+        }
+
+        100% {
+          transform: translateX(260px);
+        }
+      }
+
+      @keyframes characterSlideLeftSmall {
+        0% {
+          transform: translateX(100%);
+        }
+
+        100% {
+          transform: translateX(-80%);
+        }
+      }
+
+      @keyframes characterSlideRight {
+        0% {
+          transform: translateX(-100%);
+        }
+
+        100% {
+          transform: translateX(50px);
+        }
+      }
+
+      @keyframes characterSlideLeft {
+        0% {
+          transform: translateX(100%);
+        }
+
+        100% {
+          transform: translateX(-50px);
+        }
+      }
+
+      .start-screen-buttons
+      {
+        display: flex;
+        gap: 10rem;
+        z-index: 10;
+      }
+
+      .counter
+      {
+        position: absolute;
+        z-index: 5;
+        visibility: hidden;
+        display: flex;
+        justify-content: center;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.75);
+        animation: shrinkAnimation 5s ease-in-out;
+      }
+
+      .number
+      {
+        position: absolute;
+        top: 12%;
+        font-size: 15rem;
+        color: #fff;
+        visibility: hidden;
+      }
+
+      .number:nth-child(1)
+      {
+        animation: numberScaleAnimation 1s ease-in-out;
+      }
+      .number:nth-child(2)
+      {
+
+        animation: numberScaleAnimation 1s ease-in-out;
+        animation-delay: 1.15s;
+      }
+      .number:nth-child(3)
+      {
+        animation: numberScaleAnimation 1s ease-in-out;
+        animation-delay: 2.3s;
+      }
+
+      .go-text
+      {
+        position: absolute;
+        top: -15%;
+        font-size: 30rem;
+        font-weight: 900;
+        background-image: linear-gradient(to right, rgb(197, 45, 24), rgb(218, 147, 17));
+        text-shadow: 9.5px -9.5px #fff;
+        color: transparent;
+        background-clip: text;
+        text-transform: uppercase;
+        animation: goScaleAnimation 1.5s ease-in-out;
+        animation-delay: 3.45s;
+        visibility: hidden;
+      }
+
+      @keyframes numberScaleAnimation {
+        0% {
+          transform: scale(0);
+          visibility: hidden;
+
+        }
+        25% {
+          transform: scale(2.5);
+          visibility: visible;
+
+        }
+        30% {
+          transform: scale(1.35);
+          visibility: visible;
+
+        }
+        90% {
+          transform: scale(1.35);
+          visibility: visible;
+
+        }
+        100% {
+          transform: scale(0);
+          visibility: hidden;
+
+        }
+      }
+
+      @keyframes goScaleAnimation {
+        0% {
+          transform: scale(0);
+          visibility: hidden;
+        
+        }
+        15% {
+          transform: scale(1.2);
+          visibility: visible;
+        
+        }
+        20% {
+          transform: scale(1);
+          visibility: visible;
+        
+        }
+        90% {
+          transform: scale(1);
+          visibility: visible;
+        
+        }
+        100% {
+          transform: scale(0);
+          visibility: hidden;
+        
+        }
+      }
+
+      @keyframes shrinkAnimation {
+        0% {
+          visibility: hidden;
+          opacity: 0;
+        }
+        1% {
+          visibility: visible;
+          opacity: 1;
+        }
+        95% {
+          visibility: visible;
+          opacity: 1;
+        }
+        100% {
+          visibility: hidden;
+          opacity: 0;
+        }
+      }
+
+      .status-container
+      {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        top: -300px;
+        left: 10%;
+        right: 10%;
+        height: 8rem;
+        margin-top: 3rem;
+        animation: downAnimation 0.5s forwards;
+        animation-delay: 5s;
+      }
+
+      .player-avatar-container
+      {
+        position: relative;
+        width: 230px;
+        height: 100px;
+        border: 4px solid #333;
+        border-radius: 5px;
+        overflow: hidden;
+        margin: 0 2rem;
+      }
+
+      .player-avatar
+      {
+        position: absolute;
+        left: -60px;
+        width: 200%;
+      }
+
+      .player-avatar-right
+      {
+        left: -35px;
+        top: 5px;
+      }
+
+      .status {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+      }
+
+      @keyframes downAnimation {
+        0% {
+          top: -300px;
+        }
+        100% {
+          top: 0;
+        }
+      }
+
+      .items-image-container
+      {
+        width: 140px;
+        height: 70px;
+        padding: 0 10px;
+        overflow: hidden;
+        border: 4px solid #333;
+        border-radius: 5px;
+      }
+
+      .items-image
+      {
+        width: 100%;
+        transform: translateY(23px);
+        transition: transform 0.3s;
+      }
+
+      .items-image-right
+      {
+        transform: translateY(23px) scaleX(-1);
+      }
+
+      .player-bar-container {
+        width: 80%;
+        height: 50%;
+        border: 4px solid #333;
+        border-left: none;
+        border-radius: 0 10px 10px 0;
+        overflow: hidden;
+      }
+
+      .health-bar-container
+      {
+        position: relative;
+        border-bottom: 4px solid #333;
+        width: 100%;
+        height: 80%;
+      }
+      .health-bar-inner
+      {
+        position: absolute;
+        height: 100%;
+        background-image: linear-gradient(to right, red, red, yellow);
+        background-attachment: fixed;
+      }
+      .stamina-bar-container
+      {
+        position: relative;
+        width: 100%;
+        height: 20%;
+      }
+      .stamina-bar-inner
+      {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        background-color: rgb(3, 168, 3);
+      }
+
+      #left
+      {
+        border: 4px solid #333;
+        border-right: none;
+        border-radius: 10px 0 0 10px;
+      }
+
+      #left .health-bar-inner, #left .stamina-bar-inner
+      {
+        right: 0;
+      }
+
+      #left .health-bar-container .health-bar-inner
+      {
+        background-image: linear-gradient(to left, red , red, yellow);
+        background-attachment: fixed;
+      }
+
+      .timer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30%;
+        height: 100%;
+        border: 4px solid #333;
+        border-radius: 5px;
+      }
+      canvas {
+         background: #000000;
+         border-radius: 5px;
+      }
+
+
+      .game-over
+      {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        z-index: 2;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4rem;
+        top: '50%';
+        transform: translateX('-50%');
+        background-color: rgba(0, 0, 0, 0.75);
+      }
+
+      .win-text
+      {
+        display: none;
+        font-size: 10rem;
+        font-weight: 900;
+        background-image: linear-gradient(to right, rgb(197, 45, 24), rgb(218, 147, 17));
+        text-shadow: 9.5px -9.5px #fff;
+        color: transparent;
+        background-clip: text;
+        text-transform: uppercase;
+      }
+      .btn
+      {
+        display: none;
+        align-items: center;
+        padding: 0;
+        height: 216px;
+        width: 444px;
+        text-align: center;
+        justify-content: center;
+        background-image: url('Assets/Images/ButtonBackground.png');
+        background-size: cover;
+        border-radius: 7px;
+        padding: 1rem 5rem;
+        color: #fff;
+        cursor: pointer;
+      }
+
+      .btn h2 
+      {
+        margin-top: 36px;
+        font-family: 'VT323', monospace;
+        font-size: 5rem;
+      }
+
+      .btn:hover
+      {
+        background-image: url('Assets/Images/ButtonBackground2.png');
+      }
+      .btn:hover > h2
+      {
+        margin-top: 60px;
+      }
+      .start-game, .controls
+      {
+        display: flex;
+        align-items: center;
+        padding: 0;
+        height: 216px;
+        width: 444px;
+        scale: 0;
+        animation: btnScale 0.5s forwards;
+        animation-delay: 0.75s;
+      }
+      .btn-back
+      {
+        position: absolute;
+        display: flex;
+        bottom: 2rem;
+        left: 2rem;
+        scale: 0;
+        height: 108px;
+        width: 222px;
+        z-index: 20;
+        animation: btnScale 0.5s forwards;
+        animation-delay: 0.75s;
+      }
+      .btn-back h2
+      {
+        font-size: 3rem;
+        margin-top: 25px;
+      }
+      .btn-back:hover > h2
+      {
+        margin-top: 36px;
+      }
+      .restart-game-text
+      {
+        font-size: 2rem;
+        color: #fff;
+      }
+      #wizard {
+        display: none;
+      }
+      .animated
+      {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        z-index: 10;
+        background-color: #000000;
+        animation: test 2s;
+      }
+
+      @keyframes test {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+
+        }
+      }
+
+      @keyframes btnScale {
+        0% {
+          scale: 0;
+        }
+        70% {
+          scale: 1.15;
+        }
+        80% {
+          scale: 1.15;
+        }
+        100% {
+          scale: 1;
+        }
+      }
+
+  </style>
+</head>
+<body>
+  <div class="intro-screen">
+    <h1 style="color: #fff; font-size: 7rem;">A Mohammad Hasnat Game</h1>
+    <h2 style="font-size: 3rem;">Click to continue</h2>
+  </div>
+  <div class="start-screen">
+    <img class="character character1" src="Assets/Images/character1.png" alt="">
+    <img class="character character2" src="Assets/Images/character2.png" alt="">
+    <div class="overlay"></div>
+    <div class="start-screen-buttons">
+      <div class="btn start-game">
+        <h2 class="restart-game-text">Start Game</h2>
+      </div>
+      <div class="btn controls">
+        <h2 class="restart-game-text">Controls</h2>
+      </div>
+    </div>
+  </div>
+  <div class="controls-screen">
+    <div class="btn btn-back">
+      <h2>Back</h2>
+    </div>
+    <img class="keys-image" src="Assets/Images/Keys.png" alt="">
+    <div class="keys">
+      <div class="keys-text-container">
+        <h1 style="color: #fff;">Move</h1>
+        <h1 style="color: #fff;">Change Shoot</h1>
+      </div>
+      <div class="keys-text-container">
+        <h1 style="color: #fff;">Change Shoot</h1>
+        <h1 style="color: #fff;">Move</h1>
+      </div>
+    </div>
+    <img class="character-small character-small-left" src="Assets/Images/character1.png" alt="">
+    <img class="character-small character-small-right" src="Assets/Images/character2.png" alt="">
+    <div class="overlay"></div>
+  </div>
+  <div class="counter">
+    <h1 class="number">3</h1>
+    <h1 class="number">2</h1>
+    <h1 class="number">1</h1>
+    <h1 class="go-text">GO!</h1>
+  </div>
+  <!-- <div class="overlay"></div> -->
+  <div class="game-over">
+    <h1 class="win-text">player1 wins</h1>
+    <div class="start-screen-buttons">
+      <div id="restart" class="btn">
+        <h2 class="restart-game-text">Restart</h2>
+      </div>
+      <div id="menu-btn" class="btn">
+        <h2 class="restart-game-text">Menu</h2>
+      </div>
+    </div>
+
+  </div>
+  <div class="container">
+    <div class="status-container">
+      <div class="status">
+        <div class="items-image-container">
+          <img class="items-image items-image-left" src="Assets/Images/Items.png" alt="">
+        </div>
+        <div class="player-avatar-container">
+          <img class="player-avatar" src="Assets/Images/character1.png" alt="">
+        </div>
+        <div id="left" class="player-bar-container">
+          <div class="health-bar-container">
+            <div id="player2-health" class="health-bar-inner"></div>
+          </div>
+          <div class="stamina-bar-container">
+            <div id="player2-stamina" class="stamina-bar-inner"></div>
+          </div>
+        </div>
+        <div class="timer">
+          <h1 class="time"></h1>
+        </div>
+        <div class="player-bar-container">
+          <div class="health-bar-container">
+            <div id="player1-health" class="health-bar-inner"></div>
+          </div>
+          <div class="stamina-bar-container">
+            <div id="player1-stamina" class="stamina-bar-inner"></div>
+          </div>
+        </div>
+        <div class="player-avatar-container">
+          <img class="player-avatar player-avatar-right" src="Assets/Images/character2.png" alt="">
+        </div>
+        <div class="items-image-container">
+          <img class="items-image items-image-right" src="Assets/Images/Items.png" alt="">
+        </div>
+      </div>
+    </div>
+    <canvas id="canvas" width="600" height="600"></canvas>
+  </div>
+  <script>
+
+    document.getElementById('player1-health').style.width = '100%'
+    document.getElementById('player2-health').style.width = '100%'
+
+
+    const canvas = document.getElementById('canvas')
+    canvas.width = innerWidth
+    canvas.height = innerHeight
+    const ctx = canvas.getContext('2d')
+    ctx.fillStyle = 'transparent'
+
+    const offset =
+    {
+      x: -20,
+      y: -70
+    }
+
+    const backgroundImage = new Image()
+    backgroundImage.src = 'Assets/Tilesets/map.png'
+
+    const foregroundImage = new Image()
+    foregroundImage.src = 'Assets/Tilesets/foreground.png'
+
+    const swordSpritesheet = new Image()
+    swordSpritesheet.src = 'Assets/Spritesheets/Player/swordSpritesheet.png'
+
+    const swordSpritesheet2 = new Image()
+    swordSpritesheet2.src = 'Assets/Spritesheets/Player/swordSpritesheet2.png'
+
+    const handSpritesheet = new Image()
+    handSpritesheet.src = 'Assets/Spritesheets/Player/handSpritesheet.png'
+
+    const handSpritesheet2 = new Image()
+    handSpritesheet2.src = 'Assets/Spritesheets/Player/handSpritesheet2.png'
+
+    const fireballSpritesheet = new Image()
+    fireballSpritesheet.src = 'Assets/Spritesheets/Items/Fireball/fireballSpritesheet.png'
+
+    const explosionSpritesheet = new Image()
+    explosionSpritesheet.src = 'Assets/Spritesheets/Items/Explosion/ExplosionSpritesheet.png'
+
+    let spritesheets = [swordSpritesheet, handSpritesheet]
+    let spritesheets2 = [swordSpritesheet2, handSpritesheet2]
+
+
+
+    let swordDrawSound = new Audio('Assets/Sounds/SwordDrawSound.mp3')
+    let swordSheathSound = new Audio('Assets/Sounds/SwordSheathSound.mp3')
+    let swordSlashAirSound = new Audio('Assets/Sounds/SwordSlashAirSound.mp3')
+    let swordSlashHitSound = new Audio('Assets/Sounds/SwordSlashHitSound.mp3')
+    let swordSlashGroundSound = new Audio('Assets/Sounds/SwordSlashGroundSound.mp3')
+    let swordDownAttack1Sound = new Audio('Assets/Sounds/SwordDownAttack1Sound.mp3')
+    let swordDownAttack2Sound = new Audio('Assets/Sounds/SwordDownAttack2Sound.mp3')
+    let fireballSound = new Audio('Assets/Sounds/FireballSound.mp3')
+    let explosionSound = new Audio('Assets/Sounds/ExplosionSound.mp3')
+    let capeFallingSound = new Audio('Assets/Sounds/CapeFallingSound.mp3')
+    let capeShootingSound = new Audio('Assets/Sounds/CapeShootingSound.mp3')
+    let runningSound = new Audio('Assets/Sounds/RunningSound.mp3')
+    runningSound.volume = 0.7
+    let fallSound = new Audio('Assets/Sounds/FallSound.mp3')
+    let landingSound = new Audio('Assets/Sounds/LandingSound.mp3')
+    let slideSound = new Audio('Assets/Sounds/SlideSound.mp3')
+
+    let jumpSound = new Audio('Assets/Sounds/JumpSound.mp3')
+    let fireballShoutSound = new Audio('Assets/Sounds/FireballShoutSound.mp3')
+    let swordSlashShoutSound = new Audio('Assets/Sounds/SwordSlashShoutSound.mp3')
+    let swordDownAttackShoutSound = new Audio('Assets/Sounds/SwordDownAttackShoutSound.mp3')
+    let fireballHitShoutSound = new Audio('Assets/Sounds/FireballHitShoutSound.mp3')
+    let swordSlashHitShoutSound = new Audio('Assets/Sounds/SwordSlashHitShoutSound.mp3')
+    let swordDownAttackHitShoutSound = new Audio('Assets/Sounds/SwordDownAttackHitShoutSound.mp3')
+    let dieSound = new Audio('Assets/Sounds/DieSound.mp3')
+
+    let counterSound = new Audio('Assets/Sounds/CounterSound.mp3')
+    let buttonStartSound = new Audio('Assets/Sounds/ButtonStartSound.mp3')
+    let buttonSelectSound = new Audio('Assets/Sounds/ButtonSelectSound.mp3')
+    let buttonBackSound = new Audio('Assets/Sounds/ButtonBackSound.mp3')
+    let buttonHoverSound = new Audio('Assets/Sounds/ButtonHoverSound.mp3')
+
+    let menuMusic = new Audio('Assets/Sounds/MenuMusic.mp3')
+    let fightMusic = new Audio('Assets/Sounds/FightMusic.mp3')
+    let victoryMusic = new Audio('Assets/Sounds/VictoryMusic.mp3')
+
+    menuMusic.volume = 0.8
+    fightMusic.volume = 0.8
+    victoryMusic.volume = 0.8
+
+    let isCounter = false
+
+    function counter()
+    {
+      const statusElement = document.querySelector('.status');
+      statusElement.classList.remove('status');
+      void statusElement.offsetWidth;
+      statusElement.classList.add('status');
+      
+      const counterElement = document.querySelector('.counter');
+      counterElement.classList.remove('counter');
+      void counterElement.offsetWidth;
+      counterElement.classList.add('counter');
+      
+      const elements = document.querySelectorAll('.number');
+      
+      elements.forEach(element => {
+        element.classList.remove('number');
+        void element.offsetWidth; // Trigger reflow
+        element.classList.add('number');
+      });
+    
+      const goElement = document.querySelector('.go-text');
+      goElement.classList.remove('go-text');
+      void goElement.offsetWidth;
+      goElement.classList.add('go-text');
+
+      isCounter = true
+
+      setTimeout(() =>
+      {
+        isCounter = false
+      }, 5000)
+    }
+
+    let isGameOver = false
+
+    let timer = 65
+
+    function decreaseTimer()
+    {
+      if(!isGameOver)
+      {
+        setTimeout(decreaseTimer, 1000)
+        if (timer > 0)
+        {
+          timer--
+          document.querySelector('.time').innerHTML = timer
+        }
+      }
+    }
+
+
+    //So increased image size can still retain its pixel art style
+    ctx.webkitImageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = false;
+
+    // const bullets = []
+
+    const BULLET_SPEED = 50
+    const BULLET_SIZE = 20
+    const JUMP_HEIGHT = 50; // adjust this to control the height of the jump
+    const GRAVITY = 1;
+    let keys = {}
+
+    const frameWidth = swordSpritesheet.width / 7.7; // width of each frame
+    const frameHeight = swordSpritesheet.height / 16; // height of each frame
+
+    const player1 =
+    {
+      name: 'Player1',
+      w: 34,
+      h: 150,
+      x: 425,
+      y: 190,
+      speed: 3,
+      dx: 0,
+      dy: 0,
+      controls: {right: 'ArrowRight', rightTwo: 'Right', left: 'ArrowLeft', leftTwo: 'Left', jump: 'ArrowUp', jumpTwo: 'Up', crouch: 'ArrowDown', crouchTwo: 'Down', toggleWeapon: ',', toggleWeaponTwo: ',', attack: '.', attackTwo: '.'},
+      currentFrame: 0,
+      frameTime: 100,
+      lastFrameTime: 0,
+      isCurrentFrameZero: false,
+      frameCount: 4,
+      frames: [{x: 0, y: 0, width: frameWidth, height: frameHeight}, {x: frameWidth, y: 0, width: frameWidth, height: frameHeight},{x: 2 * frameWidth, y: 0, width: frameWidth, height: frameHeight},{x: 3 * frameWidth, y: 0, width: frameWidth, height: frameHeight}],
+      facingRight: false,
+      isCrouching: false,
+      isRunning: false,
+      isJumping: false,
+      isFalling: false,
+      isShooting: false,
+      eKeyWasPressed: false,
+      swordSelected: false,
+      isSwordDownAttack: false,
+      isSwordDownAttackImpact: false,
+      mouseDown: false,
+      isHit: false,
+      isDamaged: false,
+      isDead: false,
+      isExplosion: false,
+      drag: 0.4,
+      acc: 1,
+      hitX: 0,
+      hitY: 0,
+      hitW: 0,
+      hitH: 0,
+      powerX: -100,
+      powerY: 0,
+      powerDX: 0,
+      health: 100,
+      stamina: 100,
+      staminaDelay: false,
+      spritesheets: [swordSpritesheet, handSpritesheet],
+      currentSpritesheet: spritesheets[0],
+      explosion: { currentFrame: 0, lastFrameTime: 0, frameCount: 12, x: 0, y: 0 },
+      sounds: {
+        effects:
+        {
+          swordDrawSound: new Audio('Assets/Sounds/SwordDrawSound.mp3'),
+          swordSheathSound: new Audio('Assets/Sounds/SwordSheathSound.mp3'),
+          swordSlashAirSound: new Audio('Assets/Sounds/SwordSlashAirSound.mp3'),
+          swordSlashHitSound: new Audio('Assets/Sounds/SwordSlashHitSound.mp3'),
+          swordSlashGroundSound: new Audio('Assets/Sounds/SwordSlashGroundSound.mp3'),
+          swordDownAttack1Sound: new Audio('Assets/Sounds/SwordDownAttack1Sound.mp3'),
+          swordDownAttack2Sound: new Audio('Assets/Sounds/SwordDownAttack2Sound.mp3'),
+          fireballSound: new Audio('Assets/Sounds/FireballSound.mp3'),
+          explosionSound: new Audio('Assets/Sounds/ExplosionSound.mp3'),
+          capeFallingSound: new Audio('Assets/Sounds/CapeFallingSound.mp3'),
+          capeShootingSound: new Audio('Assets/Sounds/CapeShootingSound.mp3'),
+          runningSound: new Audio('Assets/Sounds/RunningSound.mp3'),
+          fallSound: new Audio('Assets/Sounds/FallSound.mp3'),
+          landingSound: new Audio('Assets/Sounds/LandingSound.mp3'),
+          slideSound: new Audio('Assets/Sounds/SlideSound.mp3')
+        },
+        voice:
+        {
+          jumpSound: new Audio('Assets/Sounds/JumpSound.mp3'),
+          fireballShoutSound: new Audio('Assets/Sounds/FireballShoutSound.mp3'),
+          swordSlashShoutSound: new Audio('Assets/Sounds/SwordSlashShoutSound.mp3'),
+          swordDownAttackShoutSound: new Audio('Assets/Sounds/SwordDownAttackShoutSound.mp3'),
+          fireballHitShoutSound: new Audio('Assets/Sounds/FireballHitShoutSound.mp3'),
+          swordSlashHitShoutSound: new Audio('Assets/Sounds/SwordSlashHitShoutSound.mp3'),
+          swordDownAttackHitShoutSound: new Audio('Assets/Sounds/SwordDownAttackHitShoutSound.mp3'),
+          dieSound: new Audio('Assets/Sounds/DieSound.mp3')
+        }
+      }
+    }
+
+    const player2 =
+    {
+      name: 'Player2',
+      w: 34,
+      h: 150,
+      x: 50,
+      y: 190,
+      speed: 3,
+      dx: 0,
+      dy: 0,
+      controls: {right: 'd', rightTwo: 'D', left: 'a', leftTwo: 'A', jump: 'w', jumpTwo: 'W', crouch: 's', crouchTwo: 'S', toggleWeapon: 'v', toggleWeaponTwo: 'V', attack: 'c', attackTwo: 'C'},
+      currentFrame: 0,
+      frameTime: 100,
+      lastFrameTime: 0,
+      isCurrentFrameZero: false,
+      frameCount: 4,
+      frames: [{x: 0, y: 0, width: frameWidth, height: frameHeight}, {x: frameWidth, y: 0, width: frameWidth, height: frameHeight},{x: 2 * frameWidth, y: 0, width: frameWidth, height: frameHeight},{x: 3 * frameWidth, y: 0, width: frameWidth, height: frameHeight}],
+      facingRight: true,
+      isCrouching: false,
+      isRunning: false,
+      isJumping: false,
+      isFalling: false,
+      isShooting: false,
+      eKeyWasPressed: false,
+      swordSelected: false,
+      isSwordDownAttack: false,
+      isSwordDownAttackImpact: false,
+      mouseDown: false,
+      isHit: false,
+      isDamaged: false,
+      isDead: false,
+      isExplosion: false,
+      drag: 0.4,
+      acc: 1,
+      hitX: 0,
+      hitY: 0,
+      hitW: 0,
+      hitH: 0,
+      powerX: -100,
+      powerY: 0,
+      powerDX: 0,
+      health: 100,
+      stamina: 100,
+      staminaDelay: false,
+      spritesheets: [swordSpritesheet2, handSpritesheet2],
+      currentSpritesheet: spritesheets2[0],
+      explosion: { currentFrame: 0, lastFrameTime: 0, frameCount: 12, x: 0, y: 0 },
+      sounds: {
+        effects:
+        {
+          swordDrawSound: new Audio('Assets/Sounds/SwordDrawSound.mp3'),
+          swordSheathSound: new Audio('Assets/Sounds/SwordSheathSound.mp3'),
+          swordSlashAirSound: new Audio('Assets/Sounds/SwordSlashAirSound.mp3'),
+          swordSlashHitSound: new Audio('Assets/Sounds/SwordSlashHitSound.mp3'),
+          swordSlashGroundSound: new Audio('Assets/Sounds/SwordSlashGroundSound.mp3'),
+          swordDownAttack1Sound: new Audio('Assets/Sounds/SwordDownAttack1Sound.mp3'),
+          swordDownAttack2Sound: new Audio('Assets/Sounds/SwordDownAttack2Sound.mp3'),
+          fireballSound: new Audio('Assets/Sounds/FireballSound.mp3'),
+          explosionSound: new Audio('Assets/Sounds/ExplosionSound.mp3'),
+          capeFallingSound: new Audio('Assets/Sounds/CapeFallingSound.mp3'),
+          capeShootingSound: new Audio('Assets/Sounds/CapeShootingSound.mp3'),
+          runningSound: new Audio('Assets/Sounds/RunningSound.mp3'),
+          fallSound: new Audio('Assets/Sounds/FallSound.mp3'),
+          landingSound: new Audio('Assets/Sounds/LandingSound.mp3'),
+          slideSound: new Audio('Assets/Sounds/SlideSound.mp3')
+        },
+        voice:
+        {
+          jumpSound: new Audio('Assets/Sounds/JumpSound.mp3'),
+          fireballShoutSound: new Audio('Assets/Sounds/FireballShoutSound.mp3'),
+          swordSlashShoutSound: new Audio('Assets/Sounds/SwordSlashShoutSound.mp3'),
+          swordDownAttackShoutSound: new Audio('Assets/Sounds/SwordDownAttackShoutSound.mp3'),
+          fireballHitShoutSound: new Audio('Assets/Sounds/FireballHitShoutSound.mp3'),
+          swordSlashHitShoutSound: new Audio('Assets/Sounds/SwordSlashHitShoutSound.mp3'),
+          swordDownAttackHitShoutSound: new Audio('Assets/Sounds/SwordDownAttackHitShoutSound.mp3'),
+          dieSound: new Audio('Assets/Sounds/DieSound.mp3')
+        }
+      }
+    }
+
+    backgroundImage.onload = () =>
+    {
+      // ctx.drawImage(backgroundImage, offset.x, offset.y)
+
+      update()
+    }
+
+    const fireball =
+    {
+      currentFrame: 0,
+      lastFrameTime: 0,
+      frameCount: 4,
+    }
+
+    const explosion =
+    {
+      currentFrame: 0,
+      lastFrameTime: 0,
+      frameCount: 12,
+    }
+
+    function increaseStamina(player)
+    {
+      if (player.stamina < 100 && player.staminaDelay === false)
+      {
+        player.stamina += 0.3
+        document.getElementById('player1-stamina').style.width = `${player1.stamina}%`
+        document.getElementById('player2-stamina').style.width = `${player2.stamina}%`
+      }
+    }
+
+    function Restart(player)
+    {
+      player.currentFrame = 0
+      player.frameTime = 100
+      player.lastFrameTime = 0
+      player.isCurrentFrameZero = false
+      player.frameCount = 4
+      player.frames = []
+      player.mouseDown = false
+      player.isHit = false
+      player.isDamaged = false
+      player.isDead = false
+      player.isExplosion = false
+      player.swordSelected = false
+      player.health = 100
+      player.stamina = 100
+      player.staminaDelay = false
+      player.currentSpritesheet = player.spritesheets[0]
+
+      player1.x = 425
+      player2.x = 50
+
+      player1.facingRight = false
+      player2.facingRight = true
+
+      document.getElementById('player1-health').style.width = '100%'
+      document.getElementById('player2-health').style.width = '100%'
+      document.getElementById('player1-stamina').style.width = '100%'
+      document.getElementById('player2-stamina').style.width = '100%'
+
+      document.querySelector('.game-over').style.display = 'none'
+      document.getElementById('restart').style.display = 'none'
+      document.getElementById('menu-btn').style.display = 'none'
+      document.querySelector('.win-text').style.display = 'none'
+      // document.querySelector('.btn').style.display = 'none'
+      document.querySelector('.overlay').style.display = 'none'
+      // document.querySelector('.counter').style.display = 'none'
+
+      isGameOver = false
+      timer = 65
+    }
+
+    // Function to replay the animation
+    function ReplayCount() {
+
+      const statusElement = document.querySelector('.status');
+      statusElement.classList.remove('status');
+      void statusElement.offsetWidth;
+      statusElement.classList.add('status');
+
+      const counterElement = document.querySelector('.counter');
+      counterElement.classList.remove('counter');
+      void counterElement.offsetWidth;
+      counterElement.classList.add('counter');
+
+      const elements = document.querySelectorAll('.number');
+
+      elements.forEach(element => {
+        element.classList.remove('number');
+        void element.offsetWidth; // Trigger reflow
+        element.classList.add('number');
+      });
+
+      const goElement = document.querySelector('.go-text');
+      goElement.classList.remove('go-text');
+      void goElement.offsetWidth;
+      goElement.classList.add('go-text');
+    }
+
+    introScreen = document.querySelector('.intro-screen')
+
+    introScreen.addEventListener('click', () =>
+    {
+      introScreen.style.display = 'none'
+
+      fightMusic.pause()
+
+      menuMusic.currentTime = 0
+      menuMusic.loop = true
+      menuMusic.play()
+
+      const character1 = document.querySelector('.character1');
+      character1.classList.remove('character1');
+      void character1.offsetWidth;
+      character1.classList.add('character1');
+
+      const character2 = document.querySelector('.character2');
+      character2.classList.remove('character2');
+      void character2.offsetWidth;
+      character2.classList.add('character2');
+
+      const overlay = document.querySelector('.overlay');
+      overlay.classList.remove('overlay');
+      void overlay.offsetWidth;
+      overlay.classList.add('overlay');
+
+      const start = document.querySelector('.start-game');
+      start.classList.remove('start-game');
+      void start.offsetWidth;
+      start.classList.add('start-game');
+
+      const controls = document.querySelector('.controls');
+      controls.classList.remove('controls');
+      void controls.offsetWidth;
+      controls.classList.add('controls');
+    })
+
+    btnElements = document.querySelectorAll('.btn')
+
+    btnElements.forEach(element => {
+      element.addEventListener('mouseover', () =>
+      {
+        buttonHoverSound.play()
+      })
+    });
+
+    const startBtn = document.querySelector('.start-game')
+
+    startBtn.addEventListener('click', function(){
+      buttonStartSound.play()
+      menuMusic.pause()
+
+
+      startScreen = document.querySelector('.start-screen')
+      startScreen.style.display = 'none'
+
+      const statusContainer = document.querySelector('.status-container');
+      statusContainer.classList.remove('status-container');
+      void statusContainer.offsetWidth;
+      statusContainer.classList.add('status-container');
+
+      counterSound.play()
+      counter()
+
+      setTimeout(() =>
+      {
+        fightMusic.currentTime = 0
+        fightMusic.loop = true
+        fightMusic.play()
+      }, 5000)
+
+      timer = 65
+
+      decreaseTimer()
+
+    });
+
+    const controlsBtn = document.querySelector('.controls')
+
+    controlsBtn.addEventListener('click', function(){
+      buttonSelectSound.play()
+
+      startScreen = document.querySelector('.start-screen')
+      startScreen.style.display = 'none'
+
+      startScreen = document.querySelector('.controls-screen')
+      startScreen.style.display = 'flex'
+
+    });
+
+    const backBtn = document.querySelector('.btn-back')
+
+    backBtn.addEventListener('click', function(){
+      buttonBackSound.play()
+    
+      startScreen = document.querySelector('.start-screen')
+      startScreen.style.display = 'flex'
+    
+      startScreen = document.querySelector('.controls-screen')
+      startScreen.style.display = 'none'
+    
+    });
+
+    const restart = document.getElementById('restart');
+
+    restart.addEventListener('click', function(){
+      Restart(player1)
+      Restart(player2)
+
+      victoryMusic.pause()
+      
+      const statusContainer = document.querySelector('.status-container');
+      statusContainer.classList.remove('status-container');
+      void statusContainer.offsetWidth;
+      statusContainer.classList.add('status-container');
+
+      buttonStartSound.play()
+      counter()
+      counterSound.play()
+
+      setTimeout(() =>
+      {
+        fightMusic.currentTime = 0
+        fightMusic.loop = true
+        fightMusic.play()
+      }, 5000)
+
+      timer = 65
+
+      decreaseTimer()
+    });
+
+    const menuBtn = document.getElementById('menu-btn');
+
+    menuBtn.addEventListener('click', function(){
+      buttonBackSound.play()
+
+      document.querySelector('.start-screen').style.display = 'flex'
+      document.querySelector('.game-over').style.display = 'none'
+
+      victoryMusic.pause()
+
+      menuMusic.currentTime = 0
+      menuMusic.play()
+
+      Restart(player1)
+      Restart(player2)
+
+      document.querySelector('.overlay').style.display = 'flex'
+
+    });
+
+
+
+    /*---ANIMATION---*/
+
+    // Define animation frames
+    // let frameCount = 4; // total number of frames
+
+    // let frameXOffset = 0
+    // let frameY = 0 // Frame Y coord
+    // let rows = 1
+    // let frames = []; // array of frame positions
+
+    // let hitX
+    // let hitY
+    // let hitW
+    // let hitH
+
+    // let hit2X
+    // let hit2Y
+    // let hit2W
+    // let hit2H
+
+    // let powerX
+    // let powerYoverlay
+    // let powerDX
+
+    let IdleAnimation = [{x: 0, y: 0, width: frameWidth, height: frameHeight}, {x: frameWidth, y: 0, width: frameWidth, height: frameHeight},{x: 2 * frameWidth, y: 0, width: frameWidth, height: frameHeight},{x: 3 * frameWidth, y: 0, width: frameWidth, height: frameHeight}]
+    let IdleAnimationSword = [{x: 0 + frameWidth * 3, y: 5 * frameHeight, width: frameWidth, height: frameHeight}, {x: frameWidth + frameWidth * 3, y: 5 * frameHeight, width: frameWidth, height: frameHeight},{x: 2 * frameWidth + frameWidth * 3, y: 5 * frameHeight, width: frameWidth, height: frameHeight},{x: 3 * frameWidth + frameWidth * 3, y: 5 * frameHeight, width: frameWidth, height: frameHeight}]
+    let RunAnimation = [{x: frameWidth, y: frameHeight, width: frameWidth, height: frameHeight}, {x: 2 * frameWidth, y: frameHeight, width: frameWidth, height: frameHeight},{x: 3 * frameWidth, y: frameHeight, width: frameWidth, height: frameHeight},{x: 4 * frameWidth, y: frameHeight, width: frameWidth, height: frameHeight},{x: 5 * frameWidth, y: frameHeight, width: frameWidth, height: frameHeight},{x: 6 * frameWidth, y: frameHeight, width: frameWidth, height: frameHeight}]
+    let SwordInAnimation = [{x: 0 + frameWidth * 3, y:  10 * frameHeight, width: frameWidth, height: frameHeight}, {x: frameWidth + frameWidth * 3, y:  10 * frameHeight, width: frameWidth, height: frameHeight},{x: 2 * frameWidth + frameWidth * 3, y:  10 * frameHeight, width: frameWidth, height: frameHeight},{x: 3 * frameWidth + frameWidth * 3, y:  10 * frameHeight, width: frameWidth, height: frameHeight}]
+    let SwordOutAnimation = [{x: 0, y: 10 * frameHeight, width: frameWidth, height: frameHeight}, {x: frameWidth, y: 10 * frameHeight, width: frameWidth, height: frameHeight},{x: 2 * frameWidth, y: 10 * frameHeight, width: frameWidth, height: frameHeight},{x: 3 * frameWidth, y: 10 * frameHeight, width: frameWidth, height: frameHeight}]
+    let JumpAnimation = [{x: 0, y: 2 * frameHeight, width: frameWidth, height: frameHeight}, {x: frameWidth, y: 2 * frameHeight, width: frameWidth, height: frameHeight},{x: 2 * frameWidth, y: 2 * frameHeight, width: frameWidth, height: frameHeight},{x: 3 * frameWidth, y: 2 * frameHeight, width: frameWidth, height: frameHeight},{x: 4 * frameWidth, y: 2 * frameHeight, width: frameWidth, height: frameHeight}, {x: 5 * frameWidth, y: 2 * frameHeight, width: frameWidth, height: frameHeight},{x: 6 * frameWidth, y: 2 * frameHeight, width: frameWidth, height: frameHeight},{x: 0, y: 3 * frameHeight, width: frameWidth, height: frameHeight}]
+    let FallAnimation = [{x: frameWidth, y: 3 * frameHeight, width: frameWidth, height: frameHeight}, {x: frameWidth * 2, y: 3 * frameHeight, width: frameWidth, height: frameHeight}]
+    let SlideAnimation = [{x: 0 + frameWidth * 3, y: 3 * frameHeight, width: frameWidth, height: frameHeight}, {x: frameWidth + frameWidth * 3, y: 3 * frameHeight, width: frameWidth, height: frameHeight},{x: 2 * frameWidth + frameWidth * 3, y: 3 * frameHeight, width: frameWidth, height: frameHeight},{x: 3 * frameWidth + frameWidth * 3, y: 3 * frameHeight, width: frameWidth, height: frameHeight},{x: 0, y: 4 * frameHeight, width: frameWidth, height: frameHeight}]
+    let CrouchAnimation = [{x: 0 + frameWidth * 4, y: 0, width: frameWidth, height: frameHeight}, {x: frameWidth + frameWidth * 4, y: 0, width: frameWidth, height: frameHeight},{x: 2 * frameWidth + frameWidth * 4, y: 0, width: frameWidth, height: frameHeight},{x: 0, y: 1 * frameHeight, width: frameWidth, height: frameHeight}]
+    let SwordAttackAnimation = [{x: 0, y: frameHeight * 6, width: frameWidth, height: frameHeight},{x: frameWidth, y: frameHeight * 6, width: frameWidth, height: frameHeight}, {x: 2 * frameWidth, y: frameHeight * 6, width: frameWidth, height: frameHeight},{x: 3 * frameWidth, y: frameHeight * 6, width: frameWidth, height: frameHeight},{x: 4 * frameWidth, y: frameHeight * 6, width: frameWidth, height: frameHeight},{x: 5 * frameWidth, y: frameHeight * 6, width: frameWidth, height: frameHeight},{x: 6 * frameWidth, y: frameHeight * 6, width: frameWidth, height: frameHeight}]
+    let PowerAttackAnimation = [{x: frameWidth, y: frameHeight * 12, width: frameWidth, height: frameHeight},{x: frameWidth * 2, y: frameHeight * 12, width: frameWidth, height: frameHeight},{x: frameWidth * 3, y: frameHeight * 12, width: frameWidth, height: frameHeight},{x: frameWidth * 4, y: frameHeight * 12, width: frameWidth, height: frameHeight},{x: frameWidth * 5, y: frameHeight * 12, width: frameWidth, height: frameHeight},{x: frameWidth * 6, y: frameHeight * 12, width: frameWidth, height: frameHeight},{x: 0, y: frameHeight * 13, width: frameWidth, height: frameHeight},{x: frameWidth, y: frameHeight * 13, width: frameWidth, height: frameHeight},{x: frameWidth * 2, y: frameHeight * 13, width: frameWidth, height: frameHeight}]
+    let SwordDownAttackAnimation1 = [{x: frameWidth * 4, y: frameHeight * 14, width: frameWidth, height: frameHeight}]
+    let SwordDownAttackAnimation2 = [{x: frameWidth * 6, y: frameHeight * 14, width: frameWidth, height: frameHeight},{x: 0, y: frameHeight * 15, width: frameWidth, height: frameHeight}]
+    let SwordDownAttackAnimation3 = [{x: frameWidth, y: frameHeight * 15, width: frameWidth, height: frameHeight},{x: frameWidth * 2, y: frameHeight * 15, width: frameWidth, height: frameHeight},{x: frameWidth * 3, y: frameHeight * 15, width: frameWidth, height: frameHeight}]
+    let DieAnimation = [{x: frameWidth * 5, y: frameHeight * 4, width: frameWidth, height: frameHeight},{x: frameWidth * 6, y: frameHeight * 4, width: frameWidth, height: frameHeight},{x: 0, y: frameHeight * 5, width: frameWidth, height: frameHeight}, {x: frameWidth, y: frameHeight * 5, width: frameWidth, height: frameHeight}, {x: frameWidth * 2, y: frameHeight * 5, width: frameWidth, height: frameHeight}, {x: frameWidth * 3, y: frameHeight * 5, width: frameWidth, height: frameHeight}, {x: frameWidth * 4, y: frameHeight * 5, width: frameWidth, height: frameHeight}]
+    let KickUpAnimation = [{x: frameWidth * 5, y: frameHeight * 4, width: frameWidth, height: frameHeight},{x: frameWidth * 6, y: frameHeight * 4, width: frameWidth, height: frameHeight},{x: 0, y: frameHeight * 5, width: frameWidth, height: frameHeight}, {x: frameWidth, y: frameHeight * 5, width: frameWidth, height: frameHeight}, {x: frameWidth * 2, y: frameHeight * 5, width: frameWidth, height: frameHeight}, {x: frameWidth * 3, y: frameHeight * 5, width: frameWidth, height: frameHeight}, {x: frameWidth * 4, y: frameHeight * 5, width: frameWidth, height: frameHeight}, {x: frameWidth * 5, y: frameHeight * 5, width: frameWidth, height: frameHeight}, {x: frameWidth * 6, y: frameHeight * 5, width: frameWidth, height: frameHeight}, {x: 0, y: frameHeight * 6, width: frameWidth, height: frameHeight}]
+
+    // Set up animation variables
+    // let currentFrame = 0; // index of current frame
+    // let frameTime = 100; // time (in milliseconds) between frames
+    // let player.lastFrameTime = 0; // time (in milliseconds) of last frame update
+
+    function drawPlayer(player)
+    {
+
+      if (!isGameOver) increaseStamina(player)
+
+      if (player1.health > 0 && player2.health > 0)
+      {
+      if (player.isJumping)
+      {
+        if (player.acc < 0 && !player.mouseDown)
+        {
+            // currentFrame = 0
+            player.frameTime = 100;
+            player.frames = FallAnimation
+            player.frameCount = 2
+        }
+      }
+
+      if (player.isDamaged)
+      {
+        
+        player.frames = KickUpAnimation
+
+        setTimeout(() =>
+        {
+          player.sounds.effects.fallSound.play()
+        }, 250)
+
+        player.currentSpritesheet = player.spritesheets[1]
+        player.frameCount = 10
+        player.frameTime = 120
+
+        setTimeout(() => {
+          player.isDamaged = false
+          player.currentSpritesheet = player.spritesheets[0]
+
+        }, player.frameCount * player.frameTime);
+      }
+
+
+      if (player.isSwordDownAttack && !player.isJumping)
+      {
+
+        player.frames = SwordDownAttackAnimation3
+        player.frameTime = 300
+        player.frameCount = 3
+
+        player.sounds.effects.swordDownAttack2Sound.pause()
+        player.sounds.effects.swordDownAttack2Sound.currentTime = 0
+
+        player.sounds.voice.swordDownAttackShoutSound.pause()
+        player.sounds.voice.swordDownAttackShoutSound.currentTime = 0
+
+        player.sounds.effects.swordSlashGroundSound.play()
+
+
+
+
+        if (player.isSwordDownAttackImpact && !player.isJumping)
+        {
+          player.isSwordDownAttackImpact = false
+          player.stamina -= 100
+          player.staminaDelay = true
+          document.getElementById('player1-stamina').style.width = `${player1.stamina}%`
+          document.getElementById('player2-stamina').style.width = `${player2.stamina}%`
+
+          player.hitW = frameWidth * 2.3
+          player.hitH = 130
+
+          if (player.facingRight)
+          {
+            player.hitX = player.x * 4 + frameWidth / 2
+            player.hitY = player.y * 4 + frameHeight - 20
+          }
+          else
+          {
+            player.hitX = player.x * 4 + frameWidth + 10
+            player.hitY = player.y * 4 + frameHeight - 20
+          }
+          setTimeout(() =>
+          {
+            player.hitW = 0
+            player.hitH = 0
+            player.hitX = 0
+            player.hitY = 0
+          }, 700)
+
+          setTimeout(() =>
+          {
+            player.staminaDelay = false
+          }, 700)
+        }
+
+        setTimeout(() => {
+          // Stop the sword animation after it has played
+          // currentFrame = 0
+          if (player.mouseDown && player.isSwordDownAttack)
+          {
+            player.mouseDown = false
+            player.isHit = false
+            player.isSwordDownAttack = false
+
+
+          }
+
+        }, (player.frameTime * player.frameCount) - 50);
+
+      }
+      else if (player.isSwordDownAttack && player.isFalling)
+      {
+        player.frames = SwordDownAttackAnimation2
+        player.frameTime = 50
+        player.frameCount = 2
+
+        player.sounds.voice.swordDownAttackShoutSound.volume = 0.5
+        player.sounds.voice.swordDownAttackShoutSound.playbackRate = 0.75
+        player.sounds.voice.swordDownAttackShoutSound.play()
+
+        player.sounds.effects.swordDownAttack2Sound.play()
+      }
+      }
+      if (player1.health <= 0 || (timer < 1 && player1.health < player2.health))
+      {
+        if(!isGameOver)
+        {
+          isGameOver = true
+          player1.currentSpritesheet = player1.spritesheets[1]
+          player1.currentFrame = 0
+          player1.frames = DieAnimation
+          player1.frameTime = 300;
+          player1.frameCount = 7
+
+          document.getElementById('player1-stamina').style.width = '0%'
+
+          fightMusic.pause()
+
+          player1.sounds.voice.dieSound.play()
+
+          setTimeout(() =>
+          {
+            player1.sounds.effects.fallSound.play()
+          }, 550)
+
+          player2.isDead = true
+
+          setTimeout(() =>
+          {
+            player2.isDead = false
+            player1.isDead = true
+            player2.currentFrame = 0
+            player2.frames = IdleAnimation
+            player2.frameTime = 150;
+            player2.frameCount = 4
+
+            document.querySelector('.win-text').innerHTML = 'PLAYER2 WINS'
+
+            document.querySelector('.game-over').style.display = 'flex'
+            document.getElementById('restart').style.display = 'flex'
+            document.getElementById('menu-btn').style.display = 'flex'
+            document.querySelector('.win-text').style.display = 'flex'
+            document.querySelector('.btn').style.display = 'flex'
+            document.querySelector('.overlay').style.display = 'flex'
+
+            victoryMusic.currentTime = 0
+            victoryMusic.play()
+          }, 300 * 6)
+        }
+
+      }
+      else if(player2.health <= 0 || (timer < 1 && player2.health < player1.health))
+      {
+        if(!isGameOver)
+        {
+          isGameOver = true
+          player2.currentSpritesheet = player2.spritesheets[1]
+          player2.currentFrame = 0
+          player2.frames = DieAnimation
+          player2.frameTime = 300;
+          player2.frameCount = 7
+
+          document.getElementById('player2-stamina').style.width = '0%'
+
+          fightMusic.pause()
+
+          player2.sounds.voice.dieSound.play()
+
+          setTimeout(() =>
+          {
+            player2.sounds.effects.fallSound.play()
+          }, 550)
+
+          player1.isDead = true
+
+          setTimeout(() =>
+          {
+            player1.isDead = false
+            player2.isDead = true
+            player1.currentFrame = 0
+            player1.frames = IdleAnimation
+            player1.frameTime = 150;
+            player1.frameCount = 4
+
+            document.querySelector('.win-text').innerHTML = 'PLAYER1 WINS'
+
+            document.querySelector('.game-over').style.display = 'flex'
+            document.getElementById('restart').style.display = 'flex'
+            document.getElementById('menu-btn').style.display = 'flex'
+            document.querySelector('.win-text').style.display = 'flex'
+            document.querySelector('.btn').style.display = 'flex'
+            document.querySelector('.overlay').style.display = 'flex'
+
+            victoryMusic.currentTime = 0
+            victoryMusic.loop = true
+            victoryMusic.play()
+          }, 300 * 6)
+        }
+
+      }
+      else if(timer < 1 && player2.health === player1.health)
+      {
+        if(!isGameOver)
+        {
+          isGameOver = true
+
+          player1.isDead = true
+          player2.isDead = true
+          fightMusic.pause()
+
+          setTimeout(() =>
+          {
+
+            player1.isDead = false
+            player2.isDead = false
+
+            player1.currentFrame = 0
+            player1.frames = IdleAnimation
+            player1.frameTime = 150;
+            player1.frameCount = 4
+            
+            player2.currentFrame = 0
+            player2.frames = IdleAnimation
+            player2.frameTime = 150;
+            player2.frameCount = 4
+
+            document.querySelector('.win-text').innerHTML = 'DRAW'
+
+            document.querySelector('.game-over').style.display = 'flex'
+            document.getElementById('restart').style.display = 'flex'
+            document.getElementById('menu-btn').style.display = 'flex'
+            document.querySelector('.win-text').style.display = 'flex'
+            document.querySelector('.btn').style.display = 'flex'
+            document.querySelector('.overlay').style.display = 'flex'
+
+            victoryMusic.currentTime = 0
+            victoryMusic.loop = true
+            victoryMusic.play()
+          }, 300 * 6)
+        }
+
+      }
+      const now = Date.now();
+      const delta = now - player.lastFrameTime;
+
+      if (!player.isDead)
+      {
+        if (delta > player.frameTime) {
+
+          player.currentFrame = (player.currentFrame + 1) % player.frameCount;
+
+          if (player.currentFrame >= player.frameCount) {
+            player.currentFrame = 0;
+          }
+          player.lastFrameTime = now;
+        }
+      }
+      // Render current frame
+      const frame = player.frames[player.currentFrame];
+      if (frame) { // add a check for the existence of the frame
+        ctx.save();
+        resizeImage();
+
+        // let currentSpritesheet
+
+        // if(!isGameOver) currentSpritesheet = spritesheets[0]
+        // else currentSpritesheet = spritesheets[1]
+
+        if (!player.facingRight) {
+          // Flip image horizontally
+          ctx.scale(-1, 1);
+          ctx.drawImage(
+            player.currentSpritesheet,
+            frame.x,
+            frame.y,
+            frameWidth,
+            frameHeight,
+            -player.x - frameWidth,
+            player.y,
+            frameWidth,
+            frameHeight
+          );
+
+
+        } else {
+
+          ctx.drawImage(
+            player.currentSpritesheet,
+            frame.x,
+            frame.y,
+            frameWidth,
+            frameHeight,
+            player.x,
+            player.y,
+            frameWidth,
+            frameHeight
+          );
+        }
+
+        ctx.restore();
+      }
+      // ctx.fillRect((player.x * 2) + frameWidth / 2 , player.y * 2, frameWidth, frameHeight)
+
+      ctx.fillRect(player.hitX, player.hitY, player.hitW, player.hitH)
+    }
+
+    const resizeImage = () =>
+    {
+      const scaleFactor = 4
+      ctx.scale(scaleFactor, scaleFactor)
+    }
+
+    function drawBullets(player)
+    {
+      ctx.save();
+
+      ctx.translate(player.powerX, player.powerY)
+      ctx.beginPath()
+      ctx.arc(-BULLET_SIZE / 2, -BULLET_SIZE / 2, BULLET_SIZE, 0, Math.PI * 2)
+      ctx.fill()
+
+      ctx.restore();
+
+      const frameWidthFireball = fireballSpritesheet.width / 2
+
+      let fireballAnimation = [{x: 0, y: 0, width: frameWidth, height: frameHeight}, {x: frameWidthFireball, y: 0, width: frameWidth, height: frameHeight},{x: 0, y: frameWidthFireball, width: frameWidth, height: frameHeight},{x: frameWidthFireball, y: frameWidthFireball, width: frameWidth, height: frameHeight}]
+
+
+      const now = Date.now();
+      const delta = now - fireball.lastFrameTime;
+
+
+      if (delta > 30) {
+      
+        fireball.currentFrame = (fireball.currentFrame + 1) % fireball.frameCount;
+      
+        if (fireball.currentFrame >= fireball.frameCount) {
+          fireball.currentFrame = 0;
+        }
+        fireball.lastFrameTime = now;
+      }
+
+      const frame = fireballAnimation[fireball.currentFrame];
+
+      if (frame) { // add a check for the existence of the frame
+        ctx.save()
+        if (player.facingRight)
+        {
+          ctx.scale(-1, 1);
+          ctx.drawImage(fireballSpritesheet, frame.x, frame.y, fireballSpritesheet.width/2, fireballSpritesheet.height/2, -player.powerX - BULLET_SIZE * 2, player.powerY - BULLET_SIZE * 4, fireballSpritesheet.width/2, fireballSpritesheet.height/2)
+        
+        }
+        else
+        {
+          ctx.drawImage(fireballSpritesheet, frame.x, frame.y, fireballSpritesheet.width/2, fireballSpritesheet.height/2, player.powerX - BULLET_SIZE * 3, player.powerY - BULLET_SIZE * 4, fireballSpritesheet.width/2, fireballSpritesheet.height/2)
+        }
+        ctx.restore()
+      }
+
+      if (player.isShooting)
+      {
+        player.hitW = BULLET_SIZE * 2
+        player.hitH = BULLET_SIZE * 2
+
+        player.hitY = player.powerY - BULLET_SIZE * 1.5
+
+        if(!player.facingRight)
+        {
+          player.hitX = player.powerX - 50
+        }
+        else
+        {
+          player.hitX = player.powerX - 10
+        }
+      }
+    }
+
+    function clear()
+    {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+    }
+
+    function newPos(player)
+    {
+      player.x += player.dx
+      player.y += player.dy
+
+
+      if (player.isJumping) {
+
+        player.acc -= 0.02
+        player.dy -= player.acc * 5;
+        player.y += player.dy;
+
+        if (player.acc < 0)
+        {
+          if (!player.isCurrentFrameZero) {
+            player.currentFrame = 0
+            player.isCurrentFrameZero = true;
+          }
+          player.isFalling = true
+          player.sounds.effects.capeFallingSound.play()
+        }
+      }
+
+      // else
+      // {
+      //   gravity -= 0.02
+      //   player.dy -= gravity * 5;
+      //   player.y += player.dy;
+
+      //   if (gravity < 0)
+      //   {
+      //     if (!player.isCurrentFrameZero) {
+      //       currentFrame = 0
+      //       player.isCurrentFrameZero = true;
+      //     }
+      //     isFalling = true
+      //   }
+      // }
+      if (player.y >= 190 && player.isFalling) {
+
+        player.y = 190
+        player.dy = 0;
+        player.isJumping = false;
+        player.isFalling = false
+        player.acc = 1
+        player.currentFrame = 0
+        player.sounds.effects.landingSound.playbackRate = 2
+        player.sounds.effects.landingSound.play()
+      }
+    }
+
+    function newPosBullets(player)
+    {
+      player.powerX += player.powerDX * BULLET_SPEED
+    }
+
+    function detectCollision(player)
+    {
+      if (player.x < -16) player.x = -16
+      if (player.x > (canvas.width / 4) - player.w) player.x = (canvas.width / 4) - player.w
+      if (player.y < 0) player.y = 0
+      if (player.y + player.h > canvas.height) player.y = canvas.height - player.h
+
+      if (player.powerX < 0 || player.powerX > canvas.width)
+      {
+        player.powerX = canvas.width + 100
+        player.powerDX = 0
+        player.isShooting = false
+      }
+
+      // if (player1.x + 20 > player2.x && player1.x + 20 < player2.x + 4 && player1.y * 4 > player2.y * 4 && player1.y * 4 < player2.y * 4 + 4) player1.y = player2.y
+
+      const frameWidthExplosion = explosionSpritesheet.width / 12
+
+      let explosionAnimation = [{x: 0, y: 0, width: frameWidth, height: frameHeight}, {x: frameWidthExplosion, y: 0, width: frameWidth, height: frameHeight}, {x: frameWidthExplosion * 2, y: 0, width: frameWidth, height: frameHeight},{x: frameWidthExplosion * 3, y: 0, width: frameWidth, height: frameHeight},{x: frameWidthExplosion * 4, y: 0, width: frameWidth, height: frameHeight},{x: frameWidthExplosion * 5, y: 0, width: frameWidth, height: frameHeight},{x: frameWidthExplosion * 6, y: 0, width: frameWidth, height: frameHeight},{x: frameWidthExplosion * 7, y: 0, width: frameWidth, height: frameHeight},{x: frameWidthExplosion * 8, y: 0, width: frameWidth, height: frameHeight},{x: frameWidthExplosion * 9, y: 0, width: frameWidth, height: frameHeight},{x: frameWidthExplosion * 10, y: 0, width: frameWidth, height: frameHeight},{x: frameWidthExplosion * 11, y: 0, width: frameWidth, height: frameHeight}]
+
+      if (player.isExplosion)
+      {
+        const frame = explosionAnimation[player.explosion.currentFrame];
+        
+        if (frame)
+        {
+          ctx.drawImage(explosionSpritesheet, frame.x, frame.y, explosionSpritesheet.width/12, explosionSpritesheet.height, player.explosion.x - frameWidth / 2, player.explosion.y - frameHeight, explosionSpritesheet.width/12, explosionSpritesheet.height)
+          if(player.isRunning) ctx.drawImage(explosionSpritesheet, frame.x + explosionSpritesheet.width/12 * 4, frame.y, explosionSpritesheet.width/12, explosionSpritesheet.height, (player.x * 4) + frameWidth, (player.y * 4) + frameHeight, explosionSpritesheet.width/12, explosionSpritesheet.height)
+          
+          // setTimeout(() =>
+          // {
+          //   player.explosion.currentFrame = 0
+          //   player.isExplosion = false
+          // }, 11 * 100)
+        }
+        
+        const now = Date.now();
+        const delta = now - player.explosion.lastFrameTime;
+
+
+        if (delta > 80) {
+        
+          player.explosion.currentFrame = (player.explosion.currentFrame + 1) % player.explosion.frameCount;
+          
+          if (player.explosion.currentFrame >= player.explosion.frameCount - 1) {
+            // player.explosion.currentFrame = 0;
+            player.isExplosion = false
+
+          }
+          player.explosion.lastFrameTime = now;
+        }
+        
+      }
+
+
+      // if ((player.x * 2) + frameWidth >= boundaries[i].position.x
+      //   && (player.x * 2) + frameWidth / 1.25 <= boundaries[i].position.x + boundaries[i].width
+      //   && player.y <= boundaries[i].position.y
+      //   && player.y >= boundaries[i].position.y - boundaries[i].height)
+
+      if (!player1.isHit)
+      {
+        // player2.currentSpritesheet = spritesheets[0]
+        if (player1.hitX + player1.hitW >= (player2.x * 4) + frameWidth + 20 && player1.hitX <= (player2.x * 4) + (frameWidth * 2) + 30 && player1.hitY + player1.hitH >= (player2.y * 4) + 20 && player1.hitY <= (player2.y * 4) + (frameHeight * 4) && player1.mouseDown)
+        {
+          player2.isDamaged = true
+          player2.explosion.x = player1.hitX
+          player2.explosion.y = player1.hitY
+
+          if (player1.facingRight) player2.facingRight = false
+          else player2.facingRight = true
+
+          if(player1.isSwordDownAttack)
+          {
+            player.sounds.voice.swordDownAttackHitShoutSound.volume = 0.5
+            player.sounds.voice.swordDownAttackHitShoutSound.play()
+            player2.health -= 30 
+          }
+        
+          else if(player1.isShooting)
+          {
+            player2.health -= 10
+
+            player1.powerX = canvas.width + 100
+            player1.powerDX = 0
+            
+            player2.isExplosion = true
+            player1.isShooting = false
+
+            player.sounds.voice.fireballHitShoutSound.volume = 0.5
+            player.sounds.voice.fireballHitShoutSound.play()
+            
+            player.sounds.effects.explosionSound.play()
+          }
+          else
+          {
+            player2.health -= 20
+
+            player.sounds.voice.swordSlashHitShoutSound.volume = 0.5
+            player.sounds.voice.swordSlashHitShoutSound.play()
+
+            player.sounds.effects.swordSlashHitSound.play()
+          }
+
+          document.getElementById('player2-health').style.width = `${player2.health}%`
+
+          player2.currentFrame = 0
+          player1.isHit = true
+        }
+      }
+
+      if (!player2.isHit)
+      {
+        if (player2.hitX + player2.hitW >= (player1.x * 4) + frameWidth + 20 && player2.hitX <= (player1.x * 4) + (frameWidth * 2) + 30 && player2.hitY + player2.hitH >= (player1.y * 4) + 20 && player2.hitY <= (player1.y * 4) + (frameHeight * 4) && player2.mouseDown)
+        {
+          player1.isDamaged = true
+          player1.explosion.x = player2.hitX
+          player1.explosion.y = player2.hitY
+
+          if (player2.facingRight) player1.facingRight = false
+          else player1.facingRight = true
+
+          if(player2.isSwordDownAttack)
+          {
+            player.sounds.voice.swordDownAttackHitShoutSound.volume = 0.5
+            player.sounds.voice.swordDownAttackHitShoutSound.play()
+            player1.health -= 30 
+          }
+          
+          else if(player2.isShooting)
+          {
+            player1.health -= 10
+
+            player2.powerX = canvas.width + 100
+            player2.powerDX = 0
+            
+            player1.isExplosion = true
+            player2.isShooting = false
+
+            player.sounds.voice.fireballHitShoutSound.volume = 0.5
+            player.sounds.voice.fireballHitShoutSound.play()
+            
+            player.sounds.effects.explosionSound.play()
+          }
+          else
+          {
+            player1.health -= 20
+
+            player.sounds.voice.swordSlashHitShoutSound.volume = 0.5
+            player.sounds.voice.swordSlashHitShoutSound.play()
+
+            player.sounds.effects.swordSlashHitSound.play()
+          }
+          
+          document.getElementById('player1-health').style.width = `${player1.health}%`
+          player2.isHit = true
+        }
+      }
+
+      if (player.powerX < 0 || player.powerX > canvas.width || player.powerY < 0 || player.powerY > canvas.height) {
+        // Remove the bullet from the array
+        player.powerX = canvas.width + 100
+        player.powerDX = 0
+        // player.isShooting = false
+      }
+    }
+
+
+    function update()
+    {
+      clear()
+
+      ctx.drawImage(backgroundImage, -600, -1015)
+
+      
+      detectCollision(player1)
+      detectCollision(player2)
+      
+      if (player1.isFalling || player1.isJumping || !player1.isRunning || player1.isCrouching)
+      {
+        player1.sounds.effects.runningSound.pause()
+        player1.sounds.effects.runningSound.currentTime = 0
+      }
+
+      else if (!isGameOver)
+      {
+        player1.sounds.effects.runningSound.volume = 0.7
+        player1.sounds.effects.runningSound.play()
+      }
+
+      if (player2.isFalling || player2.isJumping || !player2.isRunning || player2.isCrouching)
+      {
+        player2.sounds.effects.runningSound.pause()
+        player2.sounds.effects.runningSound.currentTime = 0
+      }
+
+      else if (!isGameOver)
+      {
+        player2.sounds.effects.runningSound.volume = 0.7
+        player2.sounds.effects.runningSound.play()
+      }
+
+      if (player1.health > 0 && player2.health > 0 && timer > 0)
+      {
+        drawBullets(player1)
+        drawBullets(player2)
+
+
+        newPosBullets(player1)
+        newPosBullets(player2)
+      }
+
+      if (player1.health > 0 && player2.health > 0 && timer > 0 && !player1.isDamaged)
+      {
+        movePlayer(player1)
+        newPos(player1)
+
+      }
+      if (player1.health > 0 && player2.health > 0 && timer > 0 && !player2.isDamaged)
+      {
+        movePlayer(player2)
+        newPos(player2)
+      }
+
+      drawPlayer(player1)
+      drawPlayer(player2)
+      
+      ctx.drawImage(foregroundImage, -600, -1015)
+
+
+      requestAnimationFrame(update)
+    }
+
+    function movePlayer(player) {
+
+    player.dy = 0
+
+  if ((keys[player.controls.right] || keys[player.controls.rightTwo]) && !isCounter) {
+
+    if (!player.mouseDown) {
+      player.dx = player.speed
+      player.facingRight = true;
+      player.isRunning = true
+      player.frameCount = 6
+      
+      if(!player.isCrouching && player.drag < 0.4) player.drag += 0.01
+
+
+      if (!player.isJumping && !player.isCrouching)
+      {
+        player.isCurrentFrameZero = false;
+        player.frames = RunAnimation
+        player.frameTime = 90
+
+      }
+    }
+
+  } else if ((keys[player.controls.left] || keys[player.controls.leftTwo]) && !isCounter) {
+
+    if (!player.mouseDown) {
+      player.dx = -player.speed;
+      player.facingRight = false;
+      player.isRunning = true
+      player.frameCount = 6
+
+      if(!player.isCrouching && player.drag < 0.4) player.drag += 0.01
+
+      if(!player.isJumping && !player.isCrouching)
+      {
+        player.isCurrentFrameZero = false;
+        player.frames = RunAnimation
+        player.frameTime = 90
+
+      }
+    }
+  } else {
+    player.dx = 0
+    player.isRunning = false
+
+    player.drag = 0
+
+    if (!player.mouseDown && !player.isJumping) {
+
+      if (!player.isCurrentFrameZero) {
+        player.currentFrame = 0
+        player.isCurrentFrameZero = true;
+      }
+
+      player.frameTime = 150
+      player.frameCount = 4
+      player.currentSpritesheet = player.spritesheets[0]
+
+      if (player.swordSelected) player.frames = IdleAnimationSword
+      else player.frames = IdleAnimation
+
+    }
+  }
+
+  if ((keys[player.controls.toggleWeapon] || keys[player.controls.toggleWeaponTwo]) && !isCounter) {
+
+    // set the animation to play out in full before changing to next animation
+
+    if (!player.isRunning && !player.isJumping && !player.isFalling && !player.isCrouching)
+    {
+      player.frameCount = 4;
+      player.frameTime = 150
+
+      if (player.swordSelected)
+      {
+        player.frames = SwordOutAnimation
+
+        player.sounds.effects.swordDrawSound.playbackRate = 2.5
+        player.sounds.effects.swordDrawSound.currentTime = 0
+        player.sounds.effects.swordDrawSound.play()
+      }
+      else
+      {
+        player.frames = SwordInAnimation
+
+        player.sounds.effects.swordSheathSound.playbackRate = 2.5
+        player.sounds.effects.swordSheathSound.currentTime = 0
+        player.sounds.effects.swordSheathSound.play()
+      }
+    }
+
+    let elementLeft = document.querySelector(".items-image-left")
+    let elementRight = document.querySelector(".items-image-right")
+
+    if (player.swordSelected)
+      {
+        if (player.name === "Player1") elementRight.style.transform = "translateY(-25px) scaleX(-1)"
+        else elementLeft.style.transform = "translateY(-25px)"
+      }
+      else
+      {
+        if (player.name === "Player1") elementRight.style.transform = "translateY(23px) scaleX(-1)"
+        else elementLeft.style.transform = "translateY(23px)"
+      }
+
+    // Check if the key was just pressed (not held down)
+    if (!player.eKeyWasPressed) {
+      player.swordSelected = !player.swordSelected;
+      player.eKeyWasPressed = true;
+    }
+  }
+  else player.eKeyWasPressed = false;
+
+  if ((keys[player.controls.jump] || keys[player.controls.jumpTwo]) && !isCounter) {
+      if (!player.isJumping && !player.mouseDown)
+      {
+        player.isJumping = true
+        player.isCurrentFrameZero = false
+
+        player.frameTime = 100;
+        player.frameCount = 8;
+        player.frames = JumpAnimation
+
+        player.sounds.voice.jumpSound.volume = 0.5
+        player.sounds.voice.jumpSound.play()
+      }
+  }
+
+  if ((keys[player.controls.crouch] || keys[player.controls.crouchTwo]) && !isCounter) {
+    if(!player.isJumping && !player.mouseDown)
+
+    {
+        player.isCrouching = true
+        if (player.isRunning && player.drag > 0)
+        {
+          player.drag -= 0.02
+          if(player.facingRight) player.dx += player.drag
+          else player.dx -= player.drag
+
+          player.frames = SlideAnimation
+          player.frameTime = 200
+          player.frameCount = 5
+
+          player.sounds.effects.slideSound.play()
+
+          if (!player.isCurrentFrameZero) {
+            player.currentFrame = 0
+            player.isCurrentFrameZero = true;
+          }
+
+        }
+        else
+        {
+          player.dx = 0
+
+          player.sounds.effects.slideSound.pause()
+          player.sounds.effects.slideSound.currentTime = 0
+
+          player.frames = CrouchAnimation
+          player.frameTime = 120
+          player.frameCount = 4
+
+        }
+      }
+  }
+  else player.isCrouching = false
+  // if (keys['ArrowUp'] || keys['Up'] || keys['W'] || keys['w']) player.dy = -player.speed
+  // else if (keys['ArrowDown'] || keys['Down'] || keys['S'] || keys['s']) player.dy = player.speed
+  // else player.dy = 0
+  if ((keys[player.controls.attack] || keys[player.controls.attackTwo]) && !isCounter) {
+  if (!player.mouseDown)
+    {
+          player.drag = 0
+          player.mouseDown = true;
+
+          if (player.mouseDown && !player.isJumping && player.stamina >= 30)
+          {
+            player.currentFrame = 0
+            player.dx = 0
+            player.isCurrentFrameZero = false;
+
+            if(player.swordSelected && player.stamina >= 30)
+            {
+              player.frames = SwordAttackAnimation
+              player.frameTime = 120
+              player.frameCount = 7
+
+              setTimeout(() =>
+              {
+                player.sounds.voice.swordSlashShoutSound.volume = 0.5
+                player.sounds.voice.swordSlashShoutSound.play()
+
+                player.hitW = 100
+                player.hitH = 130
+              },150)
+
+              player.sounds.effects.swordSlashAirSound.play()
+
+              player.stamina -= 30
+              player.staminaDelay = true
+              document.getElementById('player1-stamina').style.width = `${player1.stamina}%`
+              document.getElementById('player2-stamina').style.width = `${player2.stamina}%`
+              setTimeout(() =>
+              {
+                player.staminaDelay = false
+              }, 700)
+
+              if(!player.facingRight)
+              {
+                player.hitX = player.x * 4 + frameWidth - 45
+                player.hitY = player.y * 4 + frameHeight - 40
+              }
+              else
+              {
+                player.hitX = player.x * 4 + frameWidth + 45
+                player.hitY = player.y * 4 + frameHeight - 40
+              }
+
+            }
+            else if(!player.swordSelected && player.stamina >= 30)
+            {
+
+
+              player.frames = PowerAttackAnimation
+              player.frameTime = 120
+              player.frameCount = 9
+
+              player.sounds.effects.fireballSound.play()
+
+              setTimeout(() =>
+              {
+
+                player.stamina -= 30
+                player.staminaDelay = true
+                document.getElementById('player1-stamina').style.width = `${player1.stamina}%`
+                document.getElementById('player2-stamina').style.width = `${player2.stamina}%`
+                setTimeout(() =>
+                {
+                  player.staminaDelay = false
+                }, 700)
+
+                player.isShooting = true
+                player.powerY = (player.y * 4) + (frameHeight * 2) + 15
+
+                player.sounds.effects.capeShootingSound.play()
+
+                player.sounds.voice.fireballShoutSound.volume = 0.5
+                player.sounds.voice.fireballShoutSound.play()
+
+                if(!player.facingRight)
+                {
+                  player.powerX = (player.x * 4) + 15
+                  player.powerDX = -1
+                }
+                else
+                {
+                  player.powerX = (player.x * 4) + frameWidth * 4
+                  player.powerDX = 1
+                }
+              }, player.frameTime * 3)
+            }
+
+            setTimeout(() => {
+            // Stop the sword animation after it has played
+              player.mouseDown = false
+              player.isHit = false
+              player.currentFrame = 0
+
+
+              player.hitW = 0
+              player.hitH = 0
+              player.hitX = 0
+              player.hitY = 0
+            }, player.frameTime * player.frameCount);
+          }
+          else if (player.mouseDown && player.isJumping)
+          {
+
+            if(player.swordSelected && player.stamina >= 100)
+            {
+
+              player.isSwordDownAttack = true
+              player.isSwordDownAttackImpact = true
+
+              player.currentFrame = 0
+              player.dx = 0
+              player.isCurrentFrameZero = false;
+
+
+              player.frames = SwordDownAttackAnimation1
+              player.frameTime = 300
+              player.frameCount = 1
+
+              player.sounds.effects.swordDownAttack1Sound.play()
+            }
+
+            else player.mouseDown = false
+
+          }
+
+          else player.mouseDown = false
+
+
+    }
+  }
+}
+
+
+function keyDown(e)
+{
+  keys[e.key] = true
+}
+
+function keyUp(e)
+{
+  keys[e.key] = false
+}
+  document.addEventListener('keydown', keyDown)
+  document.addEventListener('keyup', keyUp)
+
+  </script>
+</body>
+</html>
